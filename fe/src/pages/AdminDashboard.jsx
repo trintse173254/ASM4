@@ -4,9 +4,11 @@ import {
   fetchQuizzes,
   fetchQuizById,
   createQuiz,
+  updateQuiz,
   deleteQuiz,
   createQuestion,
-  deleteQuestion
+  deleteQuestion,
+  updateQuestion
 } from '../store/slices/quizSlice';
 import {
   fetchArticles,
@@ -24,8 +26,17 @@ const AdminDashboard = () => {
   const { list: quizzes, current } = useSelector((state) => state.quizzes);
   const { list: articles } = useSelector((state) => state.articles);
   const [tab, setTab] = useState('home');
+  const [selectedQuizId, setSelectedQuizId] = useState('');
   const [quizForm, setQuizForm] = useState({ title: '', description: '' });
   const [questionForm, setQuestionForm] = useState({
+    text: '',
+    options: ['', '', '', ''],
+    correctIndex: 0
+  });
+  const [editingQuizId, setEditingQuizId] = useState(null);
+  const [editingQuizForm, setEditingQuizForm] = useState({ title: '', description: '' });
+  const [editingQuestionId, setEditingQuestionId] = useState(null);
+  const [editingQuestionForm, setEditingQuestionForm] = useState({
     text: '',
     options: ['', '', '', ''],
     correctIndex: 0
@@ -37,14 +48,49 @@ const AdminDashboard = () => {
     dispatch(fetchArticles());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (tab === 'questions' && !current && quizzes.length) {
+      const firstId = quizzes[0]._id;
+      setSelectedQuizId(firstId);
+      dispatch(fetchQuizById(firstId));
+    }
+  }, [tab, current, quizzes, dispatch]);
+
   const handleCreateQuiz = (e) => {
     e.preventDefault();
     dispatch(createQuiz(quizForm)).then(() => setQuizForm({ title: '', description: '' }));
   };
 
+  const startEditQuiz = (quiz) => {
+    setEditingQuizId(quiz._id);
+    setEditingQuizForm({ title: quiz.title, description: quiz.description || '' });
+  };
+
+  const handleUpdateQuiz = (e) => {
+    e.preventDefault();
+    if (!editingQuizId) return;
+    dispatch(
+      updateQuiz({
+        id: editingQuizId,
+        title: editingQuizForm.title,
+        description: editingQuizForm.description
+      })
+    ).then(() => {
+      setEditingQuizId(null);
+      setEditingQuizForm({ title: '', description: '' });
+    });
+  };
+
   const handleSelectQuiz = (id) => {
+    setSelectedQuizId(id);
     dispatch(fetchQuizById(id));
     setTab('questions');
+  };
+
+  const handleChangeQuestionsQuiz = (e) => {
+    const id = e.target.value;
+    setSelectedQuizId(id);
+    if (id) dispatch(fetchQuizById(id));
   };
 
   const handleCreateQuestion = (e) => {
@@ -60,6 +106,31 @@ const AdminDashboard = () => {
     ).then(() =>
       setQuestionForm({ text: '', options: ['', '', '', ''], correctIndex: 0 })
     );
+  };
+
+  const startEditQuestion = (question) => {
+    setEditingQuestionId(question._id);
+    setEditingQuestionForm({
+      text: question.text,
+      options: question.options,
+      correctIndex: question.correctIndex
+    });
+  };
+
+  const handleUpdateQuestion = (e) => {
+    e.preventDefault();
+    if (!editingQuestionId) return;
+    dispatch(
+      updateQuestion({
+        id: editingQuestionId,
+        text: editingQuestionForm.text,
+        options: editingQuestionForm.options,
+        correctIndex: Number(editingQuestionForm.correctIndex)
+      })
+    ).then(() => {
+      setEditingQuestionId(null);
+      setEditingQuestionForm({ text: '', options: ['', '', '', ''], correctIndex: 0 });
+    });
   };
 
   const handleCreateArticle = (e) => {
@@ -105,7 +176,6 @@ const AdminDashboard = () => {
           <button
             className={`nav-link ${tab === 'questions' ? 'active' : ''}`}
             onClick={() => setTab('questions')}
-            disabled={!current}
           >
             Manage Questions
           </button>
@@ -164,6 +234,9 @@ const AdminDashboard = () => {
                     <small className="text-muted">{q.description}</small>
                   </div>
                   <div className="btn-group btn-group-sm">
+                    <button className="btn btn-outline-secondary" onClick={() => startEditQuiz(q)}>
+                      Edit
+                    </button>
                     <button className="btn btn-outline-primary" onClick={() => handleSelectQuiz(q._id)}>
                       Questions
                     </button>
@@ -178,6 +251,46 @@ const AdminDashboard = () => {
               ))}
               {!quizzes.length && <p className="mb-0">No quizzes yet.</p>}
             </div>
+            {editingQuizId && (
+              <div className="card mt-3">
+                <div className="card-body">
+                  <h6 className="card-title">Edit Quiz</h6>
+                  <form onSubmit={handleUpdateQuiz}>
+                    <div className="mb-3">
+                      <label className="form-label">Title</label>
+                      <input
+                        className="form-control"
+                        value={editingQuizForm.title}
+                        onChange={(e) => setEditingQuizForm({ ...editingQuizForm, title: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Description</label>
+                      <input
+                        className="form-control"
+                        value={editingQuizForm.description}
+                        onChange={(e) =>
+                          setEditingQuizForm({ ...editingQuizForm, description: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="d-flex gap-2">
+                      <button className="btn btn-primary" type="submit">
+                        Save
+                      </button>
+                      <button
+                        className="btn btn-outline-secondary"
+                        type="button"
+                        onClick={() => setEditingQuizId(null)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -187,7 +300,21 @@ const AdminDashboard = () => {
           <div className="col-md-5">
             <div className="card">
               <div className="card-body">
-                <h5 className="card-title">Add Question to {current.title}</h5>
+                <div className="d-flex justify-content-between align-items-center">
+                  <h5 className="card-title mb-0">Add Question</h5>
+                  <select
+                    className="form-select form-select-sm w-auto"
+                    value={selectedQuizId}
+                    onChange={handleChangeQuestionsQuiz}
+                  >
+                    {quizzes.map((q) => (
+                      <option key={q._id} value={q._id}>
+                        {q.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <small className="text-muted">Quiz: {current.title}</small>
                 <form onSubmit={handleCreateQuestion}>
                   <div className="mb-2">
                     <label className="form-label">Question Text</label>
@@ -246,17 +373,89 @@ const AdminDashboard = () => {
                         ))}
                       </ul>
                     </div>
-                    <button
-                      className="btn btn-sm btn-outline-danger"
-                      onClick={() => dispatch(deleteQuestion(q._id))}
-                    >
-                      Delete
-                    </button>
+                    <div className="btn-group btn-group-sm">
+                      <button
+                        className="btn btn-outline-secondary"
+                        onClick={() => startEditQuestion(q)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-outline-danger"
+                        onClick={() => dispatch(deleteQuestion(q._id))}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
               {!current.questions?.length && <p className="mb-0">No questions yet.</p>}
             </div>
+            {editingQuestionId && (
+              <div className="card mt-3">
+                <div className="card-body">
+                  <h6 className="card-title">Edit Question</h6>
+                  <form onSubmit={handleUpdateQuestion}>
+                    <div className="mb-2">
+                      <label className="form-label">Question Text</label>
+                      <input
+                        className="form-control"
+                        value={editingQuestionForm.text}
+                        onChange={(e) =>
+                          setEditingQuestionForm({ ...editingQuestionForm, text: e.target.value })
+                        }
+                        required
+                      />
+                    </div>
+                    {editingQuestionForm.options.map((opt, idx) => (
+                      <div className="mb-2" key={idx}>
+                        <label className="form-label">Option {idx + 1}</label>
+                        <input
+                          className="form-control"
+                          value={opt}
+                          onChange={(e) => {
+                            const opts = [...editingQuestionForm.options];
+                            opts[idx] = e.target.value;
+                            setEditingQuestionForm({ ...editingQuestionForm, options: opts });
+                          }}
+                          required
+                        />
+                      </div>
+                    ))}
+                    <div className="mb-3">
+                      <label className="form-label">Correct Answer Index (0-based)</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={editingQuestionForm.correctIndex}
+                        onChange={(e) =>
+                          setEditingQuestionForm({
+                            ...editingQuestionForm,
+                            correctIndex: e.target.value
+                          })
+                        }
+                        min="0"
+                        max={editingQuestionForm.options.length - 1}
+                        required
+                      />
+                    </div>
+                    <div className="d-flex gap-2">
+                      <button className="btn btn-primary" type="submit">
+                        Save
+                      </button>
+                      <button
+                        className="btn btn-outline-secondary"
+                        type="button"
+                        onClick={() => setEditingQuestionId(null)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
