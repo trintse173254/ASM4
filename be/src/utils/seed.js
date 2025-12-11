@@ -15,8 +15,8 @@ const seed = async () => {
     Article.deleteMany({})
   ]);
 
-  const admin = await User.create({ username: 'admin', password: 'admin123', role: 'admin' });
-  const user = await User.create({ username: 'john', password: 'john123', role: 'user' });
+  const admin = await User.create({ username: 'admin', password: 'admin123', isAdmin: true });
+  const user = await User.create({ username: 'john', password: 'john123', isAdmin: false });
 
   const quiz = await Quiz.create({ title: 'General Knowledge', description: 'Basics' });
   const questionsData = [

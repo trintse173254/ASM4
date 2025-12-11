@@ -10,7 +10,7 @@ const LoginPage = () => {
   const [form, setForm] = useState({ username: '', password: '' });
 
   useEffect(() => {
-    if (token && user?.role === 'admin') navigate('/admin');
+    if (token && user?.isAdmin) navigate('/admin');
     else if (token) navigate('/dashboard');
   }, [token, user, navigate]);
 

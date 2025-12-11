@@ -13,7 +13,7 @@ const ProtectedRoute = ({ children }) => {
 
 const AdminRoute = ({ children }) => {
   const { user, token } = useSelector((state) => state.auth);
-  return token && user?.role === 'admin' ? children : <Navigate to="/login" replace />;
+  return token && user?.isAdmin ? children : <Navigate to="/login" replace />;
 };
 
 function App() {
