@@ -6,8 +6,8 @@ const User = require('../models/User');
 const router = express.Router();
 
 const signToken = (user) =>
-  jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET || 'secret', {
-    expiresIn: '7d'
+  jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d'
   });
 
 router.post(
