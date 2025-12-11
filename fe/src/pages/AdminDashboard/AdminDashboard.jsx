@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { fetchQuizzes } from '../store/slices/quizSlice';
-import { fetchArticles } from '../store/slices/articleSlice';
-import Sidebar from './AdminDashboard/Sidebar';
-import Home from './AdminDashboard/Home';
-import ManageQuizzes from './AdminDashboard/ManageQuizzes';
-import ManageQuestions from './AdminDashboard/ManageQuestions';
-import ManageArticles from './AdminDashboard/ManageArticles';
+import { fetchQuizzes } from '../../store/slices/quizSlice';
+import { fetchArticles } from '../../store/slices/articleSlice';
+import Sidebar from './Sidebar';
+import Home from './Home';
+import ManageQuizzes from './ManageQuizzes';
+import ManageQuestions from './ManageQuestions';
+import ManageArticles from './ManageArticles';
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
