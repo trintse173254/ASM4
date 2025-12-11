@@ -20,7 +20,8 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center vh-100 bg-light">
+    <div className="d-flex flex-column align-items-center justify-content-center vh-100 bg-light">
+      <h1 className="mb-4">Quiz App</h1>
       <div className="card p-4 shadow" style={{ minWidth: 380 }}>
         <h4 className="text-center mb-3">Login</h4>
         {error && <div className="alert alert-danger py-2">{error}</div>}
