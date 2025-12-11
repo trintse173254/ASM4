@@ -8,7 +8,7 @@ const router = express.Router();
 
 // Public list (requires auth to align with requirements)
 router.get('/', auth, async (req, res) => {
-  const quizzes = await Quiz.find({}).select('title description');
+  const quizzes = await Quiz.find({}).populate('questions');
   res.json(quizzes);
 });
 
