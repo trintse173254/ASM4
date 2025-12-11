@@ -12,7 +12,9 @@ const articleRoutes = require('./routes/articles');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "https://full-stack-quiz-app-nine.vercel.app"
+}));
 app.use(express.json());
 app.use(morgan('dev'));
 
