@@ -104,8 +104,8 @@ const UserDashboard = () => {
             <div className="col-12">
               <div className="card shadow-sm border-0 bg-gradient text-white" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
                 <div className="card-body p-5 text-center">
-                  <h2 className="display-5 fw-bold mb-3">Welcome to Quiz Dashboard!</h2>
-                  <p className="lead mb-4">Test your knowledge and learn with our interactive quizzes</p>
+                  <h2 className="display-5 fw-bold mb-3" style={{ color: '#ffffff', textShadow: '3px 3px 10px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 0, 0, 0.3)' }}>Welcome to Quiz Dashboard!</h2>
+                  <p className="lead mb-4" style={{ color: '#ffffff', textShadow: '2px 2px 6px rgba(0, 0, 0, 0.4)' }}>Test your knowledge and learn with our interactive quizzes</p>
                   <button className="btn btn-light btn-lg px-5" onClick={() => setTab('quiz')}>
                     Get Started
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-arrow-right ms-2 mb-1" viewBox="0 0 16 16">
