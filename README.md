@@ -152,7 +152,41 @@ After running the seed script, you can log in with these accounts:
 
 ---
 
-## 📝 Technical Notes
+## �️ Technology Stack
+
+### Architecture
+- **Monorepo:** Two-part structure with `be/` (REST API) and `fe/` (React SPA)
+- **Database:** MongoDB (via Mongoose)
+
+### Backend (`be/`)
+- **Runtime:** Node.js (CommonJS)
+- **Framework:** Express.js
+- **Security & Auth:** 
+  - JSON Web Token (JWT)
+  - bcryptjs (password hashing)
+  - express-validator (input validation)
+- **Middleware & Utilities:**
+  - CORS
+  - Morgan (logging)
+  - Dotenv (environment variables)
+- **Development:**
+  - Nodemon (`npm run dev`)
+  - Seed script (`npm run seed`)
+
+### Frontend (`fe/`)
+- **UI:** React 18 with Vite
+- **State Management:** Redux Toolkit + React Redux
+- **Routing:** React Router DOM
+- **HTTP Client:** Axios
+- **Styling:** Bootstrap 5 + React-Bootstrap
+- **Scripts:**
+  - `npm run dev` (development server)
+  - `npm run build` (production bundle)
+  - `npm run preview` (preview build)
+
+---
+
+## �📝 Technical Notes
 
 - **Data Validation:** Backend uses `express-validator` for request validation
 - **Authentication:** JWT tokens stored in `localStorage`
