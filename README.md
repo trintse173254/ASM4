@@ -42,6 +42,7 @@ npm install
 PORT=4000
 MONGO_URI=mongodb://127.0.0.1:27017/quizapp
 JWT_SECRET=supersecret
+JWT_EXPIRES_IN=7d
 ```
 
 4. (Optional) Seed the database with sample data:
@@ -68,13 +69,22 @@ cd fe
 npm install
 ```
 
-3. Start the Vite development server:
+3. Create a `.env` file in the `fe/` directory with the following variables:
+```env
+VITE_API_URL=http://localhost:4000
+VITE_PORT=3000
+```
+
+   - `VITE_API_URL` — base URL of the backend (the app appends `/api` automatically; see `fe/src/utils/api.js`).
+   - `VITE_PORT` — port for the Vite dev server (see `fe/vite.config.js`). Omit or change if port 3000 is in use.
+
+4. Start the Vite development server:
 ```bash
 npm run dev
 ```
-Frontend will be available at `http://localhost:3001`
+Frontend will be available at `http://localhost:3000` (or the port you set in `VITE_PORT`).
 
-> **Note:** The frontend expects the backend to be running at `http://localhost:4000`. If you need to change this, update `fe/src/utils/api.js`.
+> **Note:** The backend URL is read from `VITE_API_URL`. For production, point `VITE_API_URL` at your deployed API (no code change in `api.js` required).
 
 ---
 
